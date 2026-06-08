@@ -1034,6 +1034,7 @@ let caseNumber = '';
 
 const urlParams = new URLSearchParams(window.location.search);
 const forceLegendaryMode = urlParams.get('mode') === 'milenko';
+const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbyhh5A_TpTNS8s4Yx2pAyvRHLAp62OYa5PF_5GPg6HYMvxeYuvrmXKN0YqYi84ss7ihgA/exec
 
 const scanMessages = [
   "Skeniranje strukture lica...",
@@ -1105,6 +1106,21 @@ function handleFile(e) {
     document.getElementById('uploadArea').style.display = 'none';
   };
   reader.readAsDataURL(file);
+}
+
+function saveResultToGoogleSheets() {
+  if (!scanResult || !uploadedImageSrc) return;
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      classification: scanResult.classification,
+      score: scanResult.score,
+      imageBase64: uploadedImageSrc
+    })
+  }).catch(error => {
+    console.error('Google Sheets save failed:', error);
+  });
 }
 
 function resetUpload() {
@@ -1348,6 +1364,8 @@ function showResult() {
     document.getElementById('resultPanel').classList.add('rejected-flicker');
     document.body.style.animation = 'red-alert 0.3s 4';
   }
+
+  saveResultToGoogleSheets();
 
   // Scroll to result
   document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
