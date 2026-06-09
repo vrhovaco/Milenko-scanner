@@ -1055,11 +1055,12 @@ const scanMessages = [
 ];
 
 const classifications = [
-  { name:"LEGENDARNI MILENKO", min:95, max:100, prob:0.10 },
-  { name:"SERTIFIKOVANI MILENKO", min:80, max:94, prob:0.35 },
-  { name:"PRIVREMENI MILENKO", min:60, max:79, prob:0.30 },
-  { name:"MILENKO KANDIDAT", min:40, max:59, prob:0.15 },
-  { name:"NEMILENKO", min:0, max:39, prob:0.10 },
+  { name:"MILENKO PRIME", min:95, max:100, prob:0.02 },
+  { name:"MILENKO VERIFIED", min:85, max:94, prob:0.05 },
+  { name:"MILENKO CONFIRMED", min:70, max:84, prob:0.08 },
+  { name:"MILENKO DETECTED", min:55, max:69, prob:0.10 },
+  { name:"POSSIBLE MILENKO", min:40, max:54, prob:0.10 },
+  { name:"NEMILENKO DETECTED", min:0, max:39, prob:0.65 }
 ];
 
 const allCharacteristics = [
