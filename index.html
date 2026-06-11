@@ -1034,7 +1034,7 @@ let caseNumber = '';
 
 const urlParams = new URLSearchParams(window.location.search);
 const forceLegendaryMode = urlParams.get('mode') === 'milenko';
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZQuaDlqGT8LljfsJqS2nfX6lzPsbUvkwNdr3EcgPrDWx6MuozWo88Cbb5_IAP8sk6sA/exec'
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZQuaDlqGT8LljfsJqS2nfX6lzPsbUvkwNdr3EcgPrDWx6MuozWo88Cbb5_IAP8sk6sA/exec';
 
 const scanMessages = [
   "Skeniranje strukture lica...",
@@ -1067,27 +1067,30 @@ const allCharacteristics = [
   "✓ Visoka socijalna adaptabilnost",
   "✓ Snažni aftera instinkti",
   "✓ Povišena Milenko energija",
-  "✓ Iznadprosečan potencijal za slavlje",
-  "✓ Snažna sposobnost spontanog dolaska",
-  "✓ Pouzdan rad posle ponoći",
-  "✓ Napredne veštine integracije u grupu",
-  "✓ Izuzetna sposobnost lociranja aftera",
-  "✓ Visoka verovatnoća pronalaženja pravog aftera",
-  "✓ Funkcionalan i posle 'samo još jednog pića'",
-  "✓ Proverena tolerancija na buku i muziku",
-  "✓ Sposoban za navigaciju nepoznatim stanom",
-  "✓ Odlična diskrecija po pitanju aftera adrese",
-  "✓ Genetska predispozicija za kasno ostajanje",
-  "✓ Zvanično potvrđen duh žurke",
+  "✓ Prirodno dobar za atmosferu",
+  "✓ Doprinosi raspoloženju grupe",
+  "✓ Sposoban za spontani dolazak",
+  "✓ Pouzdan i posle ponoći",
+  "✓ Dobro se uklapa u društvo",
+  "✓ Zna kada treba pojačati atmosferu",
+  "✓ Ne pravi nepotrebnu dramu",
+  "✓ Ima dobar osjećaj za after",
+  "✓ Poštuje aftera protokol",
+  "✓ Dobra tolerancija na buku i muziku",
+  "✓ Diskretan po pitanju aftera lokacije",
+  "✓ Pokazuje stabilan žurka potencijal",
+  "✓ Komitet detektovao pozitivan vajb",
 ];
 
 const rejectedCharacteristics = [
-  "✗ Nedovoljno razvijena aftera svest",
-  "✗ Ispod minimuma Milenko energije",
-  "✗ Sklonost ka ranom odlasku kući",
-  "✗ Deficijencija spontanog instinkta",
-  "✗ Nedovoljna noćna izdržljivost",
-  "✗ Visok Nemilenko indeks rizika",
+  "⚠ Nedovoljno razvijena aftera energija",
+  "⚠ Slabija sposobnost uklapanja u kasnonoćnu atmosferu",
+  "⚠ Povećana šansa za rano napuštanje aftera",
+  "⚠ Moguć rizik od kvarenja atmosfere",
+  "⚠ Nedovoljna spontanost za neplanirane izlaske",
+  "⚠ Slabija tolerancija na aftera haos",
+  "⚠ Komitet detektovao nestabilan žurka potencijal",
+  "⚠ Nije preporučen za trenutne i buduće aftere",
 ];
 
 // ===========================
@@ -1098,14 +1101,17 @@ document.getElementById('cameraInput').addEventListener('change', handleFile);
 
 function handleFile(e) {
   const file = e.target.files[0];
-  if(!file) return;
+  if (!file) return;
+
   const reader = new FileReader();
+
   reader.onload = function(ev) {
     uploadedImageSrc = ev.target.result;
     document.getElementById('previewImg').src = uploadedImageSrc;
     document.getElementById('previewSection').classList.add('active');
     document.getElementById('uploadArea').style.display = 'none';
   };
+
   reader.readAsDataURL(file);
 }
 
@@ -1134,28 +1140,30 @@ function resetUpload() {
 }
 
 // ===========================
-// GENERATE RESULT
+// RESULT GENERATION
 // ===========================
 function getClassification() {
   const r = Math.random();
   let cumulative = 0;
-  for(const c of classifications) {
+
+  for (const c of classifications) {
     cumulative += c.prob;
-    if(r <= cumulative) return c;
+    if (r <= cumulative) return c;
   }
-  return classifications[1];
+
+  return classifications[classifications.length - 1];
 }
 
-function randInt(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
-function randFloat(min, max) { return (Math.random()*(max-min)+min).toFixed(1); }
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function generateCaseNumber() {
-  const digits = Math.floor(10000+Math.random()*90000);
+  const digits = Math.floor(10000 + Math.random() * 90000);
   return `MS-2026-${digits}`;
 }
 
 function generateResult() {
-
   if (forceLegendaryMode) {
     return {
       classification: "LEGENDARNI MILENKO",
@@ -1172,17 +1180,74 @@ function generateResult() {
 
   const cls = getClassification();
   const score = randInt(cls.min, cls.max);
+  const isNemilenko = cls.name === "NEMILENKO DETECTED";
+
+  if (isNemilenko) {
+    return {
+      classification: cls.name,
+      score,
+      isApproved: false,
+      afterProb: randInt(5, 35),
+      socialEnergy: randInt(10, 40),
+      spontaneous: randInt(5, 35),
+      endurance: randInt(10, 45),
+      futureReliability: randInt(5, 35),
+      nemilenkoRisk: randInt(70, 100)
+    };
+  }
+
+  if (score >= 85) {
+    return {
+      classification: cls.name,
+      score,
+      isApproved: true,
+      afterProb: randInt(80, 100),
+      socialEnergy: randInt(75, 100),
+      spontaneous: randInt(70, 100),
+      endurance: randInt(75, 100),
+      futureReliability: randInt(80, 100),
+      nemilenkoRisk: randInt(0, 20)
+    };
+  }
+
+  if (score >= 70) {
+    return {
+      classification: cls.name,
+      score,
+      isApproved: true,
+      afterProb: randInt(65, 90),
+      socialEnergy: randInt(60, 90),
+      spontaneous: randInt(55, 85),
+      endurance: randInt(60, 90),
+      futureReliability: randInt(60, 90),
+      nemilenkoRisk: randInt(10, 35)
+    };
+  }
+
+  if (score >= 55) {
+    return {
+      classification: cls.name,
+      score,
+      isApproved: true,
+      afterProb: randInt(50, 75),
+      socialEnergy: randInt(45, 75),
+      spontaneous: randInt(40, 70),
+      endurance: randInt(45, 75),
+      futureReliability: randInt(45, 75),
+      nemilenkoRisk: randInt(25, 50)
+    };
+  }
 
   return {
     classification: cls.name,
     score,
-    isApproved: cls.name !== "NEMILENKO",
-    afterProb: randInt(50,100),
-    socialEnergy: randInt(40,100),
-    spontaneous: randInt(20,100),
-    endurance: randInt(30,100),
-    futureReliability: randInt(40,100),
-    nemilenkoRisk: randInt(0,100)
+    isApproved: true,
+    afterProb: randInt(40, 60),
+    socialEnergy: randInt(35, 65),
+    spontaneous: randInt(30, 60),
+    endurance: randInt(35, 65),
+    futureReliability: randInt(35, 65),
+    nemilenkoRisk: randInt(35, 60)
   };
 }
 
@@ -1190,7 +1255,7 @@ function generateResult() {
 // SCAN
 // ===========================
 function startScan() {
-  if(!uploadedImageSrc) return;
+  if (!uploadedImageSrc) return;
 
   caseNumber = generateCaseNumber();
   scanResult = generateResult();
@@ -1200,7 +1265,7 @@ function startScan() {
   document.getElementById('scanImg').src = uploadedImageSrc;
   document.getElementById('scanIdBottom').textContent = caseNumber;
 
-  const totalDuration = 9000 + Math.random()*3000;
+  const totalDuration = 9000 + Math.random() * 3000;
   const startTime = Date.now();
   let msgIndex = 0;
   let lastMsgTime = 0;
@@ -1210,31 +1275,29 @@ function startScan() {
   const pct = document.getElementById('progressPct');
   const msg = document.getElementById('scanStatusMsg');
 
-  const indicators = ['ind1','ind2','ind3','ind4'];
-  let indTimer = 0;
+  const indicators = ['ind1', 'ind2', 'ind3', 'ind4'];
   const indDelay = totalDuration / indicators.length;
 
   function tick() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / totalDuration, 1);
+    const displayPct = Math.floor(progress * 100);
 
-    const displayPct = Math.floor(progress*100);
     fill.style.width = displayPct + '%';
     pct.textContent = displayPct + '%';
 
-    if(elapsed - lastMsgTime > msgInterval && msgIndex < scanMessages.length) {
+    if (elapsed - lastMsgTime > msgInterval && msgIndex < scanMessages.length) {
       msg.textContent = scanMessages[msgIndex++];
       lastMsgTime = elapsed;
     }
 
-    // activate indicators
     indicators.forEach((id, i) => {
-      if(elapsed > indDelay*(i+1) - indDelay*0.2) {
+      if (elapsed > indDelay * (i + 1) - indDelay * 0.2) {
         document.getElementById(id).classList.add('active');
       }
     });
 
-    if(progress < 1) {
+    if (progress < 1) {
       requestAnimationFrame(tick);
     } else {
       fill.style.width = '100%';
@@ -1243,6 +1306,7 @@ function startScan() {
       setTimeout(showResult, 800);
     }
   }
+
   requestAnimationFrame(tick);
 }
 
@@ -1258,57 +1322,60 @@ function showResult() {
   const color = isApproved ? 'approved' : 'rejected';
   const accentColor = isApproved ? 'green' : 'red';
 
-  // Header
   const rh = document.getElementById('resultHeader');
   rh.className = 'result-header ' + color;
+
   document.getElementById('resultClassification').className = 'result-classification ' + color;
   document.getElementById('resultClassification').textContent = r.classification;
-  document.getElementById('resultSubclass').textContent = `MILENKO SKOR: ${r.score} / 100 // STATUS: ${isApproved ? 'ODOBREN' : 'ODBIJEN'}`;
+  document.getElementById('resultSubclass').textContent =
+    `MILENKO SKOR: ${r.score} / 100 // STATUS: ${isApproved ? 'ODOBREN' : 'ODBIJEN'}`;
 
-  // Metrics
   const metrics = [
-    { label:'MILENKO SKOR', value:r.score, unit:'', color:accentColor },
-    { label:'AFTERA VEROVATNOĆA', value:r.afterProb, unit:'%', color:accentColor },
-    { label:'SOCIJALNA ENERGIJA', value:r.socialEnergy, unit:'%', color:'green' },
-    { label:'SPONTANI DOLAZAK', value:r.spontaneous, unit:'%', color:'green' },
-    { label:'NOĆNA IZDRŽLJIVOST', value:r.endurance, unit:'%', color:'green' },
-    { label:'BUDUĆI POTENCIJAL', value:r.futureReliability, unit:'%', color:'green' },
-    { label:'NEMILENKO RIZIK', value:r.nemilenkoRisk, unit:'%', color: r.nemilenkoRisk>60?'red':'green' },
+    { label: 'MILENKO SKOR', value: r.score, unit: '', color: accentColor },
+    { label: 'AFTERA VEROVATNOĆA', value: r.afterProb, unit: '%', color: accentColor },
+    { label: 'SOCIJALNA ENERGIJA', value: r.socialEnergy, unit: '%', color: isApproved ? 'green' : 'red' },
+    { label: 'SPONTANI DOLAZAK', value: r.spontaneous, unit: '%', color: isApproved ? 'green' : 'red' },
+    { label: 'NOĆNA IZDRŽLJIVOST', value: r.endurance, unit: '%', color: isApproved ? 'green' : 'red' },
+    { label: 'BUDUĆI POTENCIJAL', value: r.futureReliability, unit: '%', color: isApproved ? 'green' : 'red' },
+    { label: 'NEMILENKO RIZIK', value: r.nemilenkoRisk, unit: '%', color: r.nemilenkoRisk > 60 ? 'red' : 'green' },
   ];
 
   const mg = document.getElementById('metricsGrid');
   mg.innerHTML = '';
+
   metrics.forEach(m => {
     const card = document.createElement('div');
     card.className = 'metric-card';
     card.innerHTML = `
       <span class="metric-label">${m.label}</span>
       <div class="metric-value ${m.color}">${m.value}${m.unit}</div>
-      <div class="metric-bar"><div class="metric-bar-fill ${m.color}" style="width:0%" data-target="${m.value}"></div></div>
+      <div class="metric-bar">
+        <div class="metric-bar-fill ${m.color}" style="width:0%" data-target="${m.value}"></div>
+      </div>
     `;
     mg.appendChild(card);
   });
 
-  // Animate bars
   setTimeout(() => {
     document.querySelectorAll('.metric-bar-fill').forEach(bar => {
       bar.style.width = bar.dataset.target + '%';
     });
   }, 100);
 
-  // Characteristics
   const charGrid = document.getElementById('charGrid');
   charGrid.innerHTML = '';
-  if(isApproved) {
-    const shuffled = [...allCharacteristics].sort(()=>Math.random()-0.5);
-    shuffled.slice(0, randInt(6,9)).forEach(c => {
+
+  if (isApproved) {
+    const shuffled = [...allCharacteristics].sort(() => Math.random() - 0.5);
+    shuffled.slice(0, randInt(6, 9)).forEach(c => {
       const el = document.createElement('div');
       el.className = 'char-item';
       el.textContent = c;
       charGrid.appendChild(el);
     });
   } else {
-    [...rejectedCharacteristics].sort(()=>Math.random()-0.5).slice(0,4).forEach(c => {
+    const shuffled = [...rejectedCharacteristics].sort(() => Math.random() - 0.5);
+    shuffled.slice(0, randInt(4, 6)).forEach(c => {
       const el = document.createElement('div');
       el.className = 'char-item rejected-char';
       el.textContent = c;
@@ -1316,15 +1383,20 @@ function showResult() {
     });
   }
 
-  // Report
   const today = new Date();
-  const dateStr = today.toLocaleDateString('sr-RS', {year:'numeric',month:'long',day:'numeric'});
+  const dateStr = today.toLocaleDateString('sr-RS', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
   const timeStr = today.toLocaleTimeString('sr-RS');
+
   const rb = document.getElementById('reportBody');
+
   const rows = [
     ['BROJ PREDMETA', caseNumber, true],
     ['DATUM SKENIRANJA', dateStr + ', ' + timeStr, false],
-    ['VREME ANALIZE', `${(9+Math.random()*3).toFixed(2)} sekundi`, false],
+    ['VREME ANALIZE', `${(9 + Math.random() * 3).toFixed(2)} sekundi`, false],
     ['KLASIFIKACIJA SUBJEKTA', r.classification, true],
     ['MILENKO SKOR', r.score + ' / 100', true],
     ['AFTERA VEROVATNOĆA', r.afterProb + '%', true],
@@ -1332,64 +1404,68 @@ function showResult() {
     ['SPOSOBNOST SPONTANOG DOLASKA', r.spontaneous + '%', false],
     ['NOĆNA IZDRŽLJIVOST', r.endurance + '%', false],
     ['BUDUĆI AFTERA POTENCIJAL', r.futureReliability + '%', false],
-    ['NEMILENKO FAKTOR RIZIKA', r.nemilenkoRisk + '%', r.nemilenkoRisk>60],
-    ['STATUS ODOBRENJA', isApproved ? 'ODOBREN' : 'ODBIJEN', isApproved],
+    ['NEMILENKO FAKTOR RIZIKA', r.nemilenkoRisk + '%', r.nemilenkoRisk > 60],
+    ['STATUS ODOBRENJA', isApproved ? 'ODOBREN' : 'ODBIJEN', true],
   ];
-  rb.innerHTML = rows.map(([k,v,hi]) => `
+
+  rb.innerHTML = rows.map(([k, v, hi]) => `
     <div class="report-row">
       <span class="report-key">${k}</span>
-      <span class="report-val ${hi?(isApproved?'highlight':'red'):''}">${v}</span>
+      <span class="report-val ${hi ? (isApproved ? 'highlight' : 'red') : ''}">${v}</span>
     </div>
   `).join('');
 
-  // Decision
   const db = document.getElementById('decisionBox');
   const dt = document.getElementById('decisionText');
   const ds = document.getElementById('decisionStatus');
+
   db.className = 'decision-box ' + color;
   dt.className = 'decision-text' + (isApproved ? '' : ' rejected');
-  dt.textContent = isApproved
-    ? `Aftera Komitet je zaključio da skenirani pojedinac poseduje dovoljan nivo Milenko energije i demonstrira potrebne bihevioralne, socijalne i aftera karakteristike neophodne za dobijanje zvaničnog MILENKO statusa. Pojedinac je ovim ovlašćen za prisustvovanje svim trenutnim i budućim afterama, žurkama, proslavama, spontanim društvenim događajima i srodnim aktivnostima bez potrebe za pojedinačnim pozivnicama.`
-    : `Aftera Komitet nije bio u mogućnosti da verifikuje minimalne zahteve Milenko energije neophodne za trajno aftera ovlašćenje. Moguće je da su potrebne dodatne aftera sposobnosti pre ponovne procene. Preporučuje se intenzivna obuka u oblasti socijalnih veština i noćnog izlaska.`;
-  ds.className = 'decision-status ' + color;
-  ds.textContent = isApproved ? 'ODOBREN' : 'ODBIJEN';
 
-  // Stamp
+  dt.textContent = isApproved
+    ? `Nakon završene biometrijske analize, Komitet za After Sertifikaciju je jednoglasno utvrdio da subjekt ispunjava sve propisane Milenko standarde. Detektovan je visok nivo socijalne energije, sposobnost spontanog uključivanja u društvena okupljanja, stabilan after potencijal i niz karakteristika koje odgovaraju zvaničnom Milenko profilu. Ovim se subjektu dodjeljuje status MILENKO i odobrava neograničen pristup svim trenutnim i budućim afterima, žurkama, okupljanjima i srodnim događajima bez potrebe za dodatnim pozivnicama ili odobrenjima.`
+    : `Nakon detaljne analize, Komitet za After Sertifikaciju je utvrdio da subjekt trenutno ne ispunjava minimalne kriterijume za sticanje Milenko statusa. Zabilježen je povećan Nemilenko faktor, nedovoljna after kompatibilnost i niz odstupanja od propisanih Milenko standarda. Zahtjev za pristup trenutnim i budućim afterima je odbijen. Subjekt se trenutno vodi kao NEMILENKO i nije dobrodošao na trenutne ni buduće aftere bez posebnog odobrenja Komiteta. Ponovna procjena može biti zatražena nakon značajnog poboljšanja socijalne energije, spontanosti i ukupnog žurka potencijala.`;
+
+  ds.className = 'decision-status ' + color;
+  ds.textContent = isApproved
+    ? 'AFTER PRISTUP ODOBREN'
+    : 'AFTER PRISTUP ODBIJEN';
+
   const stamp = document.getElementById('officialStamp');
   stamp.className = 'stamp ' + color;
-  document.getElementById('stampWord').textContent = isApproved ? 'ODOBREN' : 'ODBIJEN';
 
-  // Effects
-  if(isApproved) {
+  document.getElementById('stampWord').textContent =
+    isApproved ? 'PRIHVAĆEN' : 'NEMILENKO';
+
+  if (isApproved) {
     setTimeout(launchConfetti, 300);
   } else {
     document.getElementById('resultPanel').classList.add('rejected-flicker');
-    document.body.style.animation = 'red-alert 0.3s 4';
   }
 
   saveResultToGoogleSheets();
-
-  // Scroll to result
-  document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
 }
 
 // ===========================
 // CONFETTI
 // ===========================
 function launchConfetti() {
-  const colors = ['#00ff88','#00aaff','#ffd700','#ff88aa','#88ffff','#ffffff'];
-  for(let i=0; i<120; i++){
+  const colors = ['#00ff88', '#00aaff', '#ffd700', '#ff88aa', '#88ffff', '#ffffff'];
+
+  for (let i = 0; i < 120; i++) {
     const piece = document.createElement('div');
-    piece.className='confetti-piece';
-    piece.style.left = Math.random()*100+'vw';
-    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-    piece.style.width = (6+Math.random()*8)+'px';
-    piece.style.height = (6+Math.random()*8)+'px';
-    piece.style.animationDuration = (2+Math.random()*3)+'s';
-    piece.style.animationDelay = (Math.random()*2)+'s';
-    piece.style.borderRadius = Math.random()>0.5?'50%':'2px';
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+    piece.style.animationDelay = (Math.random() * 2) + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+
     document.body.appendChild(piece);
-    setTimeout(()=>piece.remove(), 5500);
+    setTimeout(() => piece.remove(), 5500);
   }
 }
 
@@ -1397,10 +1473,12 @@ function launchConfetti() {
 // DOWNLOAD REPORT
 // ===========================
 function downloadReport() {
-  if(!scanResult) return;
+  if (!scanResult) return;
+
   const r = scanResult;
   const today = new Date();
   const dateStr = today.toLocaleDateString('sr-RS');
+
   const content = `
 ZVANIČNI MILENKO STATUS IZVEŠTAJ
 Komitet za Aftera Milenko Sertifikaciju — Republika Srbija
@@ -1408,7 +1486,7 @@ Komitet za Aftera Milenko Sertifikaciju — Republika Srbija
 
 BROJ PREDMETA: ${caseNumber}
 DATUM SKENIRANJA: ${dateStr}
-STATUS: ${r.isApproved ? 'ODOBREN' : 'ODBIJEN'}
+STATUS: ${r.isApproved ? 'AFTER PRISTUP ODOBREN' : 'AFTER PRISTUP ODBIJEN'}
 
 ------------------------------------------------------------
 REZULTATI ANALIZE
@@ -1426,22 +1504,24 @@ NEMILENKO FAKTOR RIZIKA: ${r.nemilenkoRisk}%
 ODLUKA KOMITETA
 ------------------------------------------------------------
 ${r.isApproved
-  ? 'Aftera Komitet je zaključio da skenirani pojedinac poseduje dovoljan nivo Milenko energije.\nPojedinac je ovim ovlašćen za prisustvovanje svim aftera događajima bez pozivnica.'
-  : 'Aftera Komitet nije mogao verifikovati zahteve Milenko energije.\nPreporučuje se ponovna procena nakon razvoja aftera kapaciteta.'}
+  ? 'Subjekt ispunjava propisane Milenko standarde i dobija neograničen pristup trenutnim i budućim afterima.'
+  : 'Subjekt ne ispunjava minimalne Milenko kriterijume. After pristup je odbijen. Subjekt se vodi kao NEMILENKO i nije dobrodošao na trenutne ni buduće aftere bez posebnog odobrenja Komiteta.'}
 
-ZVANIČNI PEČAT: ${r.isApproved ? '[ ODOBREN ]' : '[ ODBIJEN ]'}
+ZVANIČNI PEČAT: ${r.isApproved ? '[ PRIHVAĆEN ]' : '[ NEMILENKO ]'}
 
 ============================================================
 Ovaj dokument je zvanični i ima pravnu snagu u svim aftera situacijama.
 MILENKO SKENER™ v4.2.1 // 2026
   `.trim();
 
-  const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+
   a.href = url;
   a.download = `milenko-izvestaj-${caseNumber}.txt`;
   a.click();
+
   URL.revokeObjectURL(url);
 }
 
@@ -1449,13 +1529,30 @@ MILENKO SKENER™ v4.2.1 // 2026
 // SHARE
 // ===========================
 function shareResult() {
-  if(!scanResult) return;
+  if (!scanResult) return;
+
   const r = scanResult;
-  const text = `🔬 MILENKO SKENER™ REZULTAT\n\nKlasifikacija: ${r.classification}\nMilenko Skor: ${r.score}/100\nAftera Verovatnoća: ${r.afterProb}%\nStatus: ${r.isApproved ? '✅ ODOBREN' : '❌ ODBIJEN'}\n\nBroj predmeta: ${caseNumber}\n\n#MilenkoSkener #AfterParty`;
-  if(navigator.share){
-    navigator.share({title:'Milenko Skener Rezultat', text}).catch(()=>{});
+
+  const text = `🔬 MILENKO SKENER™ REZULTAT
+
+Klasifikacija: ${r.classification}
+Milenko Skor: ${r.score}/100
+Aftera Verovatnoća: ${r.afterProb}%
+Status: ${r.isApproved ? '✅ AFTER PRISTUP ODOBREN' : '❌ AFTER PRISTUP ODBIJEN'}
+
+Broj predmeta: ${caseNumber}
+
+#MilenkoSkener #AfterParty`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Milenko Skener Rezultat',
+      text
+    }).catch(() => {});
   } else {
-    navigator.clipboard.writeText(text).then(()=>alert('Rezultat kopiran u clipboard!'));
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Rezultat kopiran u clipboard!');
+    });
   }
 }
 
@@ -1466,6 +1563,7 @@ function restartScan() {
   uploadedImageSrc = null;
   scanResult = null;
   caseNumber = '';
+
   document.getElementById('fileInput').value = '';
   document.getElementById('cameraInput').value = '';
   document.getElementById('previewSection').classList.remove('active');
@@ -1476,28 +1574,49 @@ function restartScan() {
   document.getElementById('progressFill').style.width = '0%';
   document.getElementById('progressPct').textContent = '0%';
   document.getElementById('scanStatusMsg').textContent = 'Inicijalizacija sistema...';
-  ['ind1','ind2','ind3','ind4'].forEach(id=>document.getElementById(id).classList.remove('active'));
+
+  ['ind1', 'ind2', 'ind3', 'ind4'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+
   document.getElementById('resultPanel').classList.remove('rejected-flicker');
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 // ===========================
 // DRAG & DROP
 // ===========================
 const uploadArea = document.getElementById('uploadArea');
-uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.classList.add('dragover'); });
-uploadArea.addEventListener('dragleave', ()=>uploadArea.classList.remove('dragover'));
-uploadArea.addEventListener('drop', e=>{
-  e.preventDefault(); uploadArea.classList.remove('dragover');
+
+uploadArea.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+  uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+
   const file = e.dataTransfer.files[0];
-  if(file && file.type.startsWith('image/')){
+
+  if (file && file.type.startsWith('image/')) {
     const reader = new FileReader();
-    reader.onload = ev=>{
+
+    reader.onload = ev => {
       uploadedImageSrc = ev.target.result;
       document.getElementById('previewImg').src = uploadedImageSrc;
       document.getElementById('previewSection').classList.add('active');
       document.getElementById('uploadArea').style.display = 'none';
     };
+
     reader.readAsDataURL(file);
   }
 });
